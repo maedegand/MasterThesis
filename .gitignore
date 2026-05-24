@@ -5,13 +5,10 @@
 !.gitignore
 
 # Keep selected folders
-!Contact_extraction/
-!Contact_extraction/**
-!Seizure_detection/
-!Seizure_detection/**
-!Data/
-!Data/**
-
+!data/
+!data/**
+!src/
+!src/**
 # Ignore Python cache everywhere
 **/__pycache__/
 **/*.pyc
