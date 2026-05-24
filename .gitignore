@@ -16,12 +16,3 @@
 **/__pycache__/
 **/*.pyc
 
-# Large data/model files
-*.edf
-*.nii
-*.nii.gz
-*.h5
-*.pth
-*.ckpt
-*.index
-*.data-00000-of-00001
