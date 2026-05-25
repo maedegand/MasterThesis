@@ -145,4 +145,13 @@ These files encode the manually identified tip and entry point of each electrode
 
 # Notes
 
-- Input CT and MRI volumes must be **skull-stripped** before running the contact extraction pipeline.
+* Input CT and MRI volumes must be **skull-stripped** before running the contact extraction pipeline.
+
+# Credits
+
+This project builds on the following external repositories:
+
+- **ElectroLoc** — electrode localization algorithm used in the contact extraction pipeline. 
+  Source: [github.com/Quent-DL/MasterThesis_ElectroLoc](https://github.com/Quent-DL/MasterThesis_ElectroLoc.git)
+- **Transformed-based model** for EEG signals — `library.py` and the transformer model weights used in the seizure detection pipeline are adapted from this repository.
+  Source: [github.com/tbary/EEGPreTrainingDatasets](https://github.com/tbary/EEGPreTrainingDatasets.git)
