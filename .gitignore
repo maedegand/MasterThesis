@@ -9,6 +9,9 @@
 !data/**
 !src/
 !src/**
+!.gitattributes
+!requirements.txt
+
 # Ignore Python cache everywhere
 **/__pycache__/
 **/*.pyc
