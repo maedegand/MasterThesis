@@ -9,102 +9,6 @@ from pathlib import Path
 
 
 # ============================================================
-# CLI
-# ============================================================
-
-def parse_args():
-    parser = argparse.ArgumentParser(
-        prog="main.py",
-        description=(
-            "iEEG scalogram preprocessing and seizure prediction pipeline.\n\n"
-            "Usage:\n"
-            "  python main.py -i iEEG.edf -o output_dir/\n\n"
-            "With custom temp dirs:\n"
-            "  python main.py -i iEEG.edf -o output_dir/ \\\n"
-            "      --segment-dir /scratch/segs/ --scalogram-dir /scratch/scalo/"
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-
-    parser.add_argument(
-        "-i", "--input",
-        metavar="EDF_PATH",
-        required=True,
-        help="iEEG signal file (.edf).",
-    )
-
-    parser.add_argument(
-        "-o", "--output",
-        metavar="OUTPUT_DIR",
-        required=True,
-        help="Output directory for all results (X_all.npy, predictions.csv, model/, ...).",
-    )
-
-    # ── Optional temp dirs (default: inside output_dir) ───────────────────────
-    parser.add_argument(
-        "--segment-dir",
-        metavar="DIR",
-        default=None,
-        help="Where to store temp segments. Default: <OUTPUT_DIR>/segments/",
-    )
-    parser.add_argument(
-        "--scalogram-dir",
-        metavar="DIR",
-        default=None,
-        help="Where to store temp scalograms. Default: <OUTPUT_DIR>/scalograms/",
-    )
-
-    # ── Optional model/pipeline params ───────────────────────────────────────
-    parser.add_argument(
-        "--weights",
-        metavar="WEIGHTS_PATH",
-        default=None,
-        help="Path to pretrained model weights (optional).",
-    )
-    parser.add_argument(
-        "--channels",
-        type=int,
-        default=122,
-        help="Number of iEEG channels (default: 122).",
-    )
-    parser.add_argument(
-        "--segment-duration",
-        type=int,
-        default=5,
-        help="Segment duration in seconds (default: 5).",
-    )
-    parser.add_argument(
-        "--downsample-fs",
-        type=int,
-        default=1024,
-        help="Downsampling frequency in Hz (default: 1024).",
-    )
-
-    return parser.parse_args()
-
-
-# ============================================================
-# Helpers
-# ============================================================
-
-def reset_folder(folder_path):
-    """Clear folder contents without deleting the folder itself.
-    Avoids PermissionError on Windows (OneDrive, locked handles, etc.)."""
-    if os.path.exists(folder_path):
-        for item in os.listdir(folder_path):
-            item_path = os.path.join(folder_path, item)
-            try:
-                if os.path.isfile(item_path) or os.path.islink(item_path):
-                    os.remove(item_path)
-                elif os.path.isdir(item_path):
-                    shutil.rmtree(item_path)
-            except Exception as e:
-                print(f"Warning: could not delete {item_path}: {e}")
-    else:
-        os.makedirs(folder_path, exist_ok=True)
-
-
-# ============================================================
 # Main pipeline
 # ============================================================
 
@@ -295,14 +199,25 @@ if __name__ == "__main__":
     dummy_input = tf.zeros((1,) + X_all.shape[1:], dtype=tf.float32)
     _ = model(dummy_input)
 
+    # Resolve weights path: explicit --weights > default location in repo
     if args.weights:
-        try:
-            model.load_weights(args.weights)
-            print("Weights loaded successfully.")
-        except Exception as e:
-            print("Error loading weights:", e)
+        weights_path = args.weights
     else:
-        print("No weights provided — running with untrained model.")
+        # Default: Data/transformer_model/ relative to this script's location
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_root  = os.path.dirname(script_dir)  # one level up from seizure_detection/
+        weights_path = os.path.join(
+            repo_root, "Data", "transformer_model", "checkpoint_fine_tuning_no_pt"
+        )
+
+    if os.path.exists(weights_path + ".index"):
+        try:
+            model.load_weights(weights_path)
+            print(f"Weights loaded from: {weights_path}")
+        except Exception as e:
+            print(f"Error loading weights from {weights_path}: {e}")
+    else:
+        print(f"Warning: weights not found at {weights_path} — running with untrained model.")
 
     logits = model.predict(X_all, verbose=0)
     proba = tf.sigmoid(logits).numpy()
