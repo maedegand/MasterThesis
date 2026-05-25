@@ -12,12 +12,14 @@ For further details on the methodology, refer to Annex B of my master thesis, wh
    python --version
    python -m pip --version
    ```
-
 2. Install the required libraries:
 
    ```
    python -m pip install -r requirements.txt
    ```
+3. Install the ElectroLoc module and its requirements from this following adress:
+
+   https://github.com/Quent-DL/MasterThesis_ElectroLoc.git
 
 # Repository structure
 
@@ -93,7 +95,7 @@ This module preprocesses the iEEG signal into scalograms, embeds them as patch t
 python main_seizure_detection.py -i iEEG_path.edf -o folder_out/
 ```
 
-With pretrained weights:
+By default, the pretrained weights from https://github.com/tbary/EEGPreTrainingDatasets.git is used. To supply custom pretrained weights, the following command can be used. (Be carefull, the pretrained weights have to be trained on the same model architecture as the one in this work).
 
 ```bash
 python main_seizure_detection.py -i iEEG_path.edf -o folder_out/ \
@@ -122,15 +124,15 @@ python main_contact_extraction.py --help
 python main_seizure_detection.py --help
 ```
 
-| Module | Parameter | Default | Description |
-|---|---|---|---|
-| seizure_detection | `--channels` | 122 | Number of iEEG channels |
-| seizure_detection | `--segment-duration` | 5 | Segment duration (seconds) |
-| seizure_detection | `--downsample-fs` | 1024 | Downsampling frequency (Hz) |
-| seizure_detection | `--segment-dir` | `<output>/segments/` | Temporary segment directory |
-| seizure_detection | `--scalogram-dir` | `<output>/scalograms/` | Temporary scalogram directory |
-| contact_extraction | `--electroloc` | see config | ElectroLoc parent directory |
-| contact_extraction | `--mni` / `--atlas` / `--atlas-txt` / `--brain-mask-mni` | built-in AAL | Custom atlas files |
+| Module             | Parameter                                                        | Default                  | Description                   |
+| ------------------ | ---------------------------------------------------------------- | ------------------------ | ----------------------------- |
+| seizure_detection  | `--channels`                                                   | 122                      | Number of iEEG channels       |
+| seizure_detection  | `--segment-duration`                                           | 5                        | Segment duration (seconds)    |
+| seizure_detection  | `--downsample-fs`                                              | 1024                     | Downsampling frequency (Hz)   |
+| seizure_detection  | `--segment-dir`                                                | `<output>/segments/`   | Temporary segment directory   |
+| seizure_detection  | `--scalogram-dir`                                              | `<output>/scalograms/` | Temporary scalogram directory |
+| contact_extraction | `--electroloc`                                                 | see config               | ElectroLoc parent directory   |
+| contact_extraction | `--mni` / `--atlas` / `--atlas-txt` / `--brain-mask-mni` | built-in AAL             | Custom atlas files            |
 
 # Manual electrode identification
 
@@ -144,5 +146,3 @@ These files encode the manually identified tip and entry point of each electrode
 # Notes
 
 - Input CT and MRI volumes must be **skull-stripped** before running the contact extraction pipeline.
-- The EDF file is expected to follow the standard iEEG naming convention (`COG_XXX_...edf`) for automatic patient ID extraction.
-- Paths containing spaces (e.g. OneDrive directories on Windows) should always be wrapped in quotes, or assigned to a variable first as shown in the usage examples above.
