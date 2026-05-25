@@ -5,47 +5,37 @@ For further details on the methodology, refer to Annex B of my master thesis, wh
 
 # Requirements
 
-
 1. Make sure to have Python 3.10 and pip available on your computer:
 
-```
-# Both of these commands should return the versions of your Python and pip
-python --version
-python -m pip --version
-```
-
+   ```
+   # Both of these commands should return the versions of your Python and pip
+   python --version
+   python -m pip --version
+   ```
 
 2. Install the required libraries:
 
-```
-python -m pip install -r requirements.txt
-```
-
-3. Install the ElectroLoc module and its requirements at this following adress:
-
-   https://github.com/Quent-DL/MasterThesis_ElectroLoc.git
+   ```
+   python -m pip install -r requirements.txt
+   ```
 
 # Repository structure
 
 ```
 .
 ├── contact_extraction/
-│   ├── main_contact_extraction.py   # Pipeline contact extraction
+│   ├── main_contact_extraction.py   # Pipeline entry point
 │   ├── nii_preprocessing.py         # CT/MRI mask generation and co-registration
 │   ├── edf_preprocessing.py         # EDF loading and electrode extraction
 │   ├── csv_preprocessing.py         # Entry point detection and CSV handling
 │   ├── atlas.py                     # Atlas co-registration and label dilation
 │   ├── labeling.py                  # Contact numbering and atlas-based labeling
-│   ├── shift_handling.py            # Electrode shift correction
-|   ├── test_validation.py           # Test for validation
-│   └── main_validation.py	     # Validation
-|   
+│   └── shift_handling.py            # Electrode shift correction
 │
 ├── seizure_detection/
-│   ├── main_seizure_detection.py    # Pipeline seizure detection
-|   ├── library_SEEG.py    	     # Library for SEEG signals
-|   ├── library_SEEG_no_save.py      # Library with no intermediate save
-│   └── library.py                   # Library from T. Bary's GitHub. │
+│   ├── main_seizure_detection.py    # Pipeline entry point
+│   └── library_SEEG.py              # Segmentation, scalogram generation, model
+│
 └── README.md
 ```
 
@@ -68,17 +58,17 @@ python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT
 By default the AAL atlas bundled with the repository is used. To supply a custom atlas, all four atlas flags must be provided together:
 
 ```powershell
-python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT 
-    --mni MNI152.nii.gz 
-    --atlas my_atlas.nii.gz 
-    --atlas-txt my_atlas_labels.txt 
+python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT `
+    --mni MNI152.nii.gz `
+    --atlas my_atlas.nii.gz `
+    --atlas-txt my_atlas_labels.txt `
     --brain-mask-mni brain_mask_mni.nii.gz
 ```
 
 The ElectroLoc parent directory can also be overridden:
 
 ```powershell
-python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT 
+python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT `
     --electroloc path/to/MasterThesis_ElectroLoc
 ```
 
@@ -90,9 +80,7 @@ folder_out/
 ├── input_ElectroLoc/        # Electrode info and entry point coordinates
 ├── mask_generated/          # Electrode and surface masks
 ├── output_ElectroLoc.csv    # Raw contact coordinates from ElectroLoc
-├── output_ElectroLoc.nii.gz    # Binary mask with raw contact coordinates from ElectroLoc
 ├── contacts_shifted_corrected.csv   # Final contact coordinates after shift correction
-├── contacts_shifted_corrected.nii.gz  # Binary mask with final contact coordinates after shift correction
 ├── contact_shifted_corrected.nii.gz # Contact mask in CT space
 └── labeled_contacts.csv     # Contacts with AAL region labels
 ```
@@ -116,7 +104,7 @@ python main_seizure_detection.py -i iEEG_path.edf -o folder_out/ \
 
 ```
 folder_out/
-├── segments/                         # Temporary 5s bipolar segments (.csv) with list of segments (.npy)
+├── segments/                         # Temporary 5s bipolar segments (.npy)
 ├── scalograms/                       # Temporary scalogram files (.mat)
 ├── X_all.npy                         # Tokenized model inputs
 ├── y_all.npy                         # Labels
@@ -134,15 +122,15 @@ python main_contact_extraction.py --help
 python main_seizure_detection.py --help
 ```
 
-| Module             | Parameter                                                        | Default                  | Description                   |
-| ------------------ | ---------------------------------------------------------------- | ------------------------ | ----------------------------- |
-| seizure_detection  | `--channels`                                                   | 122                      | Number of iEEG channels       |
-| seizure_detection  | `--segment-duration`                                           | 5                        | Segment duration (seconds)    |
-| seizure_detection  | `--downsample-fs`                                              | 1024                     | Downsampling frequency (Hz)   |
-| seizure_detection  | `--segment-dir`                                                | `<output>/segments/`   | Temporary segment directory   |
-| seizure_detection  | `--scalogram-dir`                                              | `<output>/scalograms/` | Temporary scalogram directory |
-| contact_extraction | `--electroloc`                                                 | see config               | ElectroLoc parent directory   |
-| contact_extraction | `--mni` / `--atlas` / `--atlas-txt` / `--brain-mask-mni` | built-in AAL             | Custom atlas files            |
+| Module | Parameter | Default | Description |
+|---|---|---|---|
+| seizure_detection | `--channels` | 122 | Number of iEEG channels |
+| seizure_detection | `--segment-duration` | 5 | Segment duration (seconds) |
+| seizure_detection | `--downsample-fs` | 1024 | Downsampling frequency (Hz) |
+| seizure_detection | `--segment-dir` | `<output>/segments/` | Temporary segment directory |
+| seizure_detection | `--scalogram-dir` | `<output>/scalograms/` | Temporary scalogram directory |
+| contact_extraction | `--electroloc` | see config | ElectroLoc parent directory |
+| contact_extraction | `--mni` / `--atlas` / `--atlas-txt` / `--brain-mask-mni` | built-in AAL | Custom atlas files |
 
 # Manual electrode identification
 
@@ -155,4 +143,6 @@ These files encode the manually identified tip and entry point of each electrode
 
 # Notes
 
-- Input CT and MRI volumes must be **skull-stripped** before running the contact extraction pipeline
+- Input CT and MRI volumes must be **skull-stripped** before running the contact extraction pipeline.
+- The EDF file is expected to follow the standard iEEG naming convention (`COG_XXX_...edf`) for automatic patient ID extraction.
+- Paths containing spaces (e.g. OneDrive directories on Windows) should always be wrapped in quotes, or assigned to a variable first as shown in the usage examples above.
