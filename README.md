@@ -19,7 +19,7 @@ For further details on the methodology, refer to Annex B of my master thesis, wh
    ```
 3. Install the ElectroLoc module and its requirements from this following adress:
 
-   https://github.com/Quent-DL/MasterThesis_ElectroLoc.git
+   [github.com/Quent-DL/MasterThesis_ElectroLoc](https://github.com/Quent-DL/MasterThesis_ElectroLoc.git)
 
 # Repository structure
 
@@ -95,7 +95,7 @@ This module preprocesses the iEEG signal into scalograms, embeds them as patch t
 python main_seizure_detection.py -i iEEG_path.edf -o folder_out/
 ```
 
-By default, the pretrained weights from https://github.com/tbary/EEGPreTrainingDatasets.git is used. To supply custom pretrained weights, the following command can be used. (Be carefull, the pretrained weights have to be trained on the same model architecture as the one in this work).
+By default, the pretrained weights from [github.com/tbary/EEGPreTrainingDatasets](https://github.com/tbary/EEGPreTrainingDatasets.git) is used. To supply custom pretrained weights, the following command can be used. (Be carefull, the pretrained weights have to be trained on the same model architecture as the one in this work).
 
 ```bash
 python main_seizure_detection.py -i iEEG_path.edf -o folder_out/ \
