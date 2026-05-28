@@ -62,17 +62,17 @@ python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT
 By default the AAL atlas bundled with the repository is used. To supply a custom atlas, all four atlas flags must be provided together:
 
 ```powershell
-python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT `
-    --mni MNI152.nii.gz `
-    --atlas my_atlas.nii.gz `
-    --atlas-txt my_atlas_labels.txt `
+python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT 
+    --mni MNI152.nii.gz 
+    --atlas my_atlas.nii.gz 
+    --atlas-txt my_atlas_labels.txt 
     --brain-mask-mni brain_mask_mni.nii.gz
 ```
 
 The ElectroLoc parent directory can also be overridden:
 
 ```powershell
-python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT `
+python main_contact_extraction.py $CT $MRI $MASK $EDF -o $OUT 
     --electroloc path/to/MasterThesis_ElectroLoc
 ```
 
