@@ -37,7 +37,7 @@ For further details on the methodology, refer to Annex B of my master thesis, wh
 ├── seizure_detection/
 │   ├── main_seizure_detection.py    # Pipeline entry point
 │   ├── library_SEEG.py              # Segmentation, scalogram generation, model
-|   ├── library.py		     # Library of functions from the implementation of T. Bary.
+|   ├── library.py		             # Library of functions from the implementation of T. Bary.
 |   └── library_SEEG_no_save.py      # Segmentation, scalogram generation, model with no intermediate save
 │
 └── README.md
